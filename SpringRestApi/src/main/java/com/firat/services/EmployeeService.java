@@ -1,8 +1,7 @@
 package com.firat.services;
 
-import com.firat.controller.Employee;
+import com.firat.model.Employee;
 import com.firat.repository.EmployeeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,12 +9,14 @@ import java.util.List;
 @Service
 public class EmployeeService {
 
+    private final EmployeeRepository employeeRepository;
 
-    @Autowired
-    private EmployeeRepository employeeRepository;//autwired eklenmezse null point hatası yersin
-
+    // Constructor injection
+    public EmployeeService(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
 
     public List<Employee> getAllEmployeeList() {
-        return employeeRepository.getAllEmployeeList();
+        return employeeRepository.findAll();
     }
 }

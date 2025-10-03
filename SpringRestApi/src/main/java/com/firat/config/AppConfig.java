@@ -14,13 +14,12 @@ public class AppConfig {
     public List<Employee> employeeList() {
         List<Employee> employeeList = new ArrayList<>();
 
-        employeeList.add(new Employee("1","Fırat","ASI"));
-        employeeList.add(new Employee("2","Boran","ASI"));
-        employeeList.add(new Employee("1","Melis","ASI"));
-        employeeList.add(new Employee("1","Emine","ASI"));
-        employeeList.add(new Employee("1","Haluk","ASI"));
+        employeeList.add(new Employee(1L, "Fırat"));
+        employeeList.add(new Employee(2L, "Boran"));
+        employeeList.add(new Employee(3L, "Melis"));
+        employeeList.add(new Employee(4L, "Emine"));
+        employeeList.add(new Employee(5L, "Haluk"));
 
         return employeeList;
-
     }
 }
