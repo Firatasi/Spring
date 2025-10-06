@@ -4,15 +4,12 @@ import com.firat.model.Employee;
 import com.firat.services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController //spring contiande controller beanı oluşması için kullanılır    //önce controller->service->repostirory->db
-@RequestMapping(path = "/rest/api")//gelen bütün isteklerde kök adres tnaımlaması. bütün metodların basına/ rest/api eklendi
+@RequestMapping(path = "/rest/api/employee")//gelen bütün isteklerde kök adres tnaımlaması. bütün metodların basına/ rest/api eklendi
 public class RestEmployeeController {
 
     //autowired ile service enjekte etmem gerekiyor.
@@ -23,15 +20,22 @@ public class RestEmployeeController {
     //bütün listedeki işçileri dön
 
 
-    @GetMapping(path = "/employee-list")//geti isteği olduğu için getmapping:: postmanden gelen isteği hangi methodla eşleşmesi gerektiğini belirlemek için kullanıyoruz
+    @GetMapping(path = "/list")//geti isteği olduğu için getmapping:: postmanden gelen isteği hangi methodla eşleşmesi gerektiğini belirlemek için kullanıyoruz
     public List<Employee> getAllEmployeeList() {
         //isteği aldık bu isteği service yönlendir
         return employeeService.getAllEmployeeList();//**service katmanına geçişş yaptık
     }
 
-    @GetMapping(path = "/employee-list/{id}")
+    @GetMapping(path = "/list/{id}")
     public Employee getEmployeeById(@PathVariable (name = "id", required = true) String id) {//PATHVERİABLE KULLANIMI İD GELECEK /gelmesi zorunlu olacak required true/:: idye göre veriyi getirecek repodan baslayarak yazmak daha mantıklı
         return employeeService.getEmployeeById(id);
+    }
+
+    @GetMapping(path = "/with-params")
+    public List<Employee> getEmployeeWithParams(@RequestParam (name = "firstName",required = false) String firstName, //""den sonra reqired false dersem firstname doldurmak zorunda değilim her iki değişken içinde yapılabilir fakat normal değeri her ikisi boş olamaz
+                                                @RequestParam (name = "lastName",required = false) String lastName) {
+        System.out.println(firstName + " " + lastName);
+        return employeeService.getEmployeeWithParams(firstName, lastName);
     }
 
 }
