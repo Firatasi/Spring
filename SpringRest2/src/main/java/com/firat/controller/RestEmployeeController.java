@@ -5,6 +5,7 @@ import com.firat.services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +27,11 @@ public class RestEmployeeController {
     public List<Employee> getAllEmployeeList() {
         //isteği aldık bu isteği service yönlendir
         return employeeService.getAllEmployeeList();//**service katmanına geçişş yaptık
+    }
+
+    @GetMapping(path = "/employee-list/{id}")
+    public Employee getEmployeeById(@PathVariable (name = "id", required = true) String id) {//PATHVERİABLE KULLANIMI İD GELECEK /gelmesi zorunlu olacak required true/:: idye göre veriyi getirecek repodan baslayarak yazmak daha mantıklı
+        return employeeService.getEmployeeById(id);
     }
 
 }

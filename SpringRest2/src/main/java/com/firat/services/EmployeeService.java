@@ -21,5 +21,8 @@ public class EmployeeService {
         return employeeRepository.getAllEmployeeList();
     }
 
+    public Employee getEmployeeById(String id) { //pathveriable kullanımı
+        return employeeRepository.getEmployeeById(id);
+    }
 
 }

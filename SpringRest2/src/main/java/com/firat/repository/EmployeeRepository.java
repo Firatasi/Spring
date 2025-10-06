@@ -18,5 +18,18 @@ public class EmployeeRepository {
         return employeeList;
     }
 
+    public Employee getEmployeeById(String id) {  //PATHVERİABLE KULLANIMI İD GELECEK gelmesi zorunlu olacak required true::
+        Employee findEmployee = null;
+        for (Employee employee : employeeList) {
+            if (id.equals(employee.getId())) {
+                findEmployee = employee;
+                break;
+            }
+
+
+        }
+        return findEmployee;
+    }
+
 
 }
