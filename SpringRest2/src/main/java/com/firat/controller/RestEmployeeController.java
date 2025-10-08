@@ -1,6 +1,7 @@
 package com.firat.controller;
 
 import com.firat.model.Employee;
+import com.firat.model.UpdateEmployeeRequest;
 import com.firat.services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,5 +45,15 @@ public class RestEmployeeController {
         return employeeService.saveEmployee(newEmployee);
     }
 
+
+    @DeleteMapping(path = "/delete-employee/{id}")
+    public boolean deleteEmployee(@PathVariable(name = "id") String id) {
+        return true;
+    }
+
+    @PutMapping(path = "/update-employee/{id}") // guncelleme işlermlerinde putmapping kullanılır
+    public Employee updateEmployee(@PathVariable(name = "id") String id,@RequestBody UpdateEmployeeRequest request) {
+        return employeeService.updateEmployee(id, request);
+    }
 
 }

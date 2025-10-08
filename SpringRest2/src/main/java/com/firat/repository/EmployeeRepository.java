@@ -1,5 +1,6 @@
 package com.firat.repository;
 
+import com.firat.model.UpdateEmployeeRequest;
 import com.firat.services.EmployeeService;
 import com.firat.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,49 @@ public class EmployeeRepository {
     public Employee saveEmployee(Employee newEmployee) {
         employeeList.add(newEmployee);
         return newEmployee;
+    }
+
+    public boolean deleteEmployee(String id) {
+        Employee deleteEmployee = null;
+        for (Employee employee : employeeList) {
+            if (id.equals(employee.getId())) {
+                deleteEmployee = employee;
+                break;
+            }
+        }
+        if (deleteEmployee == null) {
+            return false;
+        }else {
+            employeeList.remove(deleteEmployee);
+        }
+        return true;
+    }
+
+    private Employee findEmployeeById(String id) {
+        Employee findEmployee = null;
+        for (Employee employee : employeeList) {
+            if (id.equals(employee.getId())) {
+                findEmployee = employee;
+                break;
+            }
+        }
+        return findEmployee;
+    }
+
+    public Employee updateEmployee(String id, UpdateEmployeeRequest request) {
+        Employee findEmployee = findEmployeeById(id);
+        if (findEmployee != null) {
+            deleteEmployee(id);
+
+            Employee updatedEmployee = new Employee();
+            updatedEmployee.setId(id);
+            updatedEmployee.setFirstName(request.getFirstName());
+            updatedEmployee.setLastName(request.getLastName());
+
+            employeeList.add(updatedEmployee);
+            return updatedEmployee;
+        }
+        return null;
     }
 
 }
