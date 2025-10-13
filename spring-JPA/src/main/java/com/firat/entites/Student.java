@@ -1,5 +1,6 @@
 package com.firat.entites;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class Student {
     @Column(name = "last_name", nullable = false,length = 80)
     private String lastName;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "birth_of_day", nullable = true)
     private String birthOfDate;
 }
