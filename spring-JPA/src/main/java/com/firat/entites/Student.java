@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity  //JPA (Java Persistence API) tarafından bir sınıfın veritabanı tablosu olduğunu belirtmek için kullanılır.
+@Entity  //!bunu bulması için startera ekle!!JPA (Java Persistence API) tarafından bir sınıfın veritabanı tablosu olduğunu belirtmek için kullanılır.
 @Table(name = "student")
 @Getter
 @Setter //(getter setter yerine data da kullanilabilir sadece @Data)
