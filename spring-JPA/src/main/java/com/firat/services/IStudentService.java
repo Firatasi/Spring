@@ -16,12 +16,12 @@ public interface IStudentService {
 
 
     //get için
-    public List<Student> getAllStudents();
+    public List<DtoStudent> getAllStudents();
 
-    public Student getStudentById(Integer id);
+    public DtoStudent getStudentById(Integer id);
 
     public void deleteStudentById(Integer id);
 
-    public Student updateStudentById(Integer id, Student updateStudent);
+    public DtoStudent updateStudentById(Integer id, DtoStudentIU dtoStudentIU);
 
 }
