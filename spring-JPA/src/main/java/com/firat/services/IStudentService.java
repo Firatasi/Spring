@@ -1,5 +1,7 @@
 package com.firat.services;
 
+import com.firat.dto.DtoStudent;
+import com.firat.dto.DtoStudentIU;
 import com.firat.entites.Student;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +12,7 @@ import java.util.List;
 public interface IStudentService {
 
     //post için
-    public Student saveStudent(Student student);
+    public DtoStudent saveStudent(DtoStudentIU student);
 
 
     //get için

@@ -1,5 +1,7 @@
 package com.firat.controller;
 
+import com.firat.dto.DtoStudent;
+import com.firat.dto.DtoStudentIU;
 import com.firat.entites.Student;
 
 import java.util.List;
@@ -9,7 +11,7 @@ public interface IStudentController {
 
 
     //post için
-    public Student saveStudent(Student student);
+    public DtoStudent saveStudent(DtoStudentIU dtoStudentIU);
 
 
     //get için

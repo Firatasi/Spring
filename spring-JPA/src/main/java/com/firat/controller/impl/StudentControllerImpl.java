@@ -1,6 +1,8 @@
 package com.firat.controller.impl;
 
 import com.firat.controller.IStudentController;
+import com.firat.dto.DtoStudent;
+import com.firat.dto.DtoStudentIU;
 import com.firat.entites.Student;
 import com.firat.services.IStudentService;
 import jakarta.annotation.PostConstruct;
@@ -18,8 +20,8 @@ public class StudentControllerImpl implements IStudentController {
 
     @PostMapping(path = "/save")
     @Override
-    public Student saveStudent(@RequestBody Student student){
-        return studentService.saveStudent(student);
+    public DtoStudent saveStudent(@RequestBody DtoStudentIU dtoStudentIU){
+        return studentService.saveStudent(dtoStudentIU);
     }
 
     @GetMapping(path = "/list")
