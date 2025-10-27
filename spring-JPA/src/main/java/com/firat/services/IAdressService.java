@@ -1,9 +1,7 @@
-package com.firat.controller;
+package com.firat.services;
 
 import com.firat.dto.DtoAdress;
 
-public interface IAdressController {
-
+public interface IAdressService {
     public DtoAdress findAdressById(Long id);
-
 }
