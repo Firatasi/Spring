@@ -11,6 +11,8 @@ import java.util.List;
 @Service
 public interface IStudentService {
 
+
+
     //post için
     public DtoStudent saveStudent(DtoStudentIU student);
 

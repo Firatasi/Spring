@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity  //!bunu bulması için startera ekle!!JPA (Java Persistence API) tarafından bir sınıfın veritabanı tablosu olduğunu belirtmek için kullanılır.
 @Table(name = "student")
 @Getter
@@ -28,4 +30,8 @@ public class Student {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "birth_of_day", nullable = true)
     private String birthOfDate;
+
+    @ManyToMany
+    //@JoinTable(name = {"student", JoinColumns = @JoinColumn(name ="student_id"), inverseJoinColumns = @JoinColumn(name ="course_id"))
+    private List<Course> courses;
 }

@@ -1,7 +1,9 @@
 package com.firat.services.impl;
 
+import com.firat.dto.DtoCourse;
 import com.firat.dto.DtoStudent;
 import com.firat.dto.DtoStudentIU;
+import com.firat.entites.Course;
 import com.firat.entites.Student;
 import com.firat.repository.StudentRepository;
 import com.firat.services.IStudentService;
@@ -45,14 +47,23 @@ public class StudentServiceimpl implements IStudentService {
 
     @Override
     public DtoStudent getStudentById(Integer id) {
-        DtoStudent dto = new DtoStudent();
+        DtoStudent dtoStudent = new DtoStudent();
         Optional<Student> optional = studentRepository.findById(id);
-        if(optional.isPresent()) { //veri bulundu mu
-            Student dbStudent = optional.get();
-
-            BeanUtils.copyProperties(dbStudent, dto);
+        if(optional.isEmpty()) {
+            return null;
         }
-        return dto;
+        Student dbStudent = optional.get();
+        BeanUtils.copyProperties(dbStudent, dtoStudent);
+
+        if (dbStudent.getCourses() != null && !dbStudent.getCourses().isEmpty()) {
+            for (Course course : dbStudent.getCourses()) {
+            DtoCourse dtoCourse = new DtoCourse();
+            BeanUtils.copyProperties(course, dtoCourse);
+            dtoStudent.getCourses().add(dtoCourse);
+            }
+        }
+
+        return dtoStudent;
     }
 
     @Override
