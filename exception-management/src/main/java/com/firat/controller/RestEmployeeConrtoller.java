@@ -1,8 +1,9 @@
 package com.firat.controller;
 
 import com.firat.dto.dtoEmployee;
+import com.firat.model.RootEntity;
 
 
 public interface RestEmployeeConrtoller {
-    public dtoEmployee findEmployeeById(Long id);
+    public RootEntity<dtoEmployee> findEmployeeById(Long id);
 }
