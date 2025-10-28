@@ -2,6 +2,9 @@ package com.firat.service.impl;
 
 import com.firat.dto.dtoDepartment;
 import com.firat.dto.dtoEmployee;
+import com.firat.exception.BaseException;
+import com.firat.exception.ErrorMessage;
+import com.firat.exception.MessageType;
 import com.firat.model.Department;
 import com.firat.model.Employee;
 import com.firat.repository.EmployeeRepository;
@@ -24,7 +27,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
 
         Optional<Employee> optional = employeeRepository.findById(id);
         if(optional.isEmpty()) {
-            return null;
+            throw new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST, id.toString()));
         }
         Employee employee = optional.get();
         Department department = employee.getDepartment();
