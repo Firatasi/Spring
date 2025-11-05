@@ -23,7 +23,7 @@ public class AuthServiceImpl implements IAuthService {
     public DtoUser register(AuthRequest request) {
         DtoUser dto = new DtoUser();
         User user = new User();
-        user.setUserName(request.getUsername());
+        user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         User savedUser = userRepository.save(user);

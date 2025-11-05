@@ -31,7 +31,7 @@ public class User implements UserDetails { // implement ediyoruz intefaci kurall
     private Long id;
 
     @Column(name = "userName")
-    private String userName;
+    private String username;
 
     @Column(name = "password")
     private String password;
