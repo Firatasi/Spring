@@ -24,6 +24,11 @@ public class SecurityConfig {
     public static final String AUTHENTICATE = "/authenticate";
     public static final String REGISTER = "/register";
 
+    public static final String[] SWAGGER_PATHS = {
+            "/swagger-ui.html",
+            "/v2/api-docs",
+    };
+
     // --- BEANS ---
 
     @Bean
