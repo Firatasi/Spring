@@ -10,13 +10,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 
 import java.util.Optional;
 
@@ -27,25 +24,26 @@ public class AppConfig {
     private UserRepository userRepository;
 
     @Bean
-    public UserDetailsService UserDetailsService() {
-
+    public UserDetailsService userDetailsService() {
         return new UserDetailsService() {
+
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
                 Optional<User> optional = userRepository.findByUsername(username);
-                if (optional.isEmpty()) {
+                if(optional.isEmpty()) {
                     throw new BaseException(new ErrorMessage(username, MessageType.USERNAME_NOT_FOUND));
                 }
-
                 return optional.get();
             }
         };
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() { //şifreleri kriptolamak
-        return new BCryptPasswordEncoder();
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider  = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService());
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
     }
 
     @Bean
@@ -53,13 +51,12 @@ public class AppConfig {
         return configuration.getAuthenticationManager();
     }
 
-    public DaoAuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(UserDetailsService());
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
+
+
 
 }
 
