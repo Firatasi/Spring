@@ -87,6 +87,30 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         }
     }
 
+    public boolean isValidRefreshToken(Date expiredDate) {
+        return new Date().before(expiredDate);
+    }
+
+    @Override
+    public AuthResponse refreshToken(RefreshToken input) {
+
+        Optional<RefreshToken> optRefreshToken = refreshTokenRepository.findByRefreshToken(input.getRefreshToken());
+
+        if (optRefreshToken.isEmpty()) {
+            throw new BaseException(new ErrorMessage(input.getRefreshToken(), MessageType.REFRESH_TOKEN_INVALID));
+        }
+
+        if (!isValidRefreshToken(optRefreshToken.get().getExpiredDate())) {
+            throw new BaseException(new ErrorMessage(input.getRefreshToken(), MessageType.REFRESH_TOKEN_IS_EXPIRED));
+        }
+
+        User user = optRefreshToken.get().getUser();
+        String accessToken = jwtService.generateToken(user);
+        RefreshToken savedRefreshToken = refreshTokenRepository.save(createRefreshToken(user));
+
+        return new AuthResponse(accessToken, savedRefreshToken.getRefreshToken());
+    }
+
 
 
 }

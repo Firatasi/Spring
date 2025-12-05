@@ -6,6 +6,7 @@ import com.firat.controller.RestBaseController;
 import com.firat.controller.RootEntity;
 import com.firat.dto.AuthResponse;
 import com.firat.dto.DtoUser;
+import com.firat.model.RefreshToken;
 import com.firat.service.IAuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,12 @@ public class RestAuthenticationControllerImpl extends RestBaseController impleme
     @Override
     public RootEntity<AuthResponse> authenticate(@Valid @RequestBody AuthRequest input) {
         return ok(authenticationService.authenticate(input));
+    }
+
+    @PostMapping("/refreshToken")
+    @Override
+    public RootEntity<AuthResponse> refreshToken(@Valid @RequestBody RefreshToken input) {
+        return ok(authenticationService.refreshToken(input));
     }
 
 }
