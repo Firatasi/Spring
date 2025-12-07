@@ -58,9 +58,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             throw new BaseException(new ErrorMessage(ex.getMessage(), MessageType.TOKEN_IS_EXPIRED));
         } catch (Exception e){
             throw new BaseException(new ErrorMessage(e.getMessage(), MessageType.GENERAL_EXCEPTION));
-
         }
 
+        filterChain.doFilter(request, response);
 
     }
 }
