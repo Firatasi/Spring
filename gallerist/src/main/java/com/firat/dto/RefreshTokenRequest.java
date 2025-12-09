@@ -1,13 +1,14 @@
 package com.firat.dto;
 
 import jakarta.validation.constraints.NotEmpty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class RefreshTokenRequest {
+
     @NotEmpty
     private String refreshToken;
-
 }
