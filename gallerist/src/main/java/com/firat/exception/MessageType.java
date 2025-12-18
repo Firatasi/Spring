@@ -13,7 +13,7 @@ public enum MessageType {
     CURRENY_RATES_IS_OCCURED("1010" , "döviz kuru alınamadı"),
     CUSTOMER_AMOUNT_IS_NOT_ENOUGH("1011" , "müşterinin parası yeterli değildir"),
     CAR_STATUS_IS_ALREADY_SALED("1012" , "araba satılmış göründüğü için satılamaz"),
-    GENERAL_EXCEPTION("9999" , "genel bir hata oluştu");
+    GENERAL_EXCEPTION("9999" , "genel bir hata oluştu"), REFRESH_TOKEN_INVALID("1013", "token yanlış" );
 
     private String code;
     private String message;
