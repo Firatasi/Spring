@@ -73,6 +73,11 @@
             <artifactId>jakarta.validation-api</artifactId>
             <version>3.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.firat</groupId>
+            <artifactId>ordercraft</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
