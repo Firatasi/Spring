@@ -1,40 +1,56 @@
 package com.demo.crud.controller;
 
 import com.demo.crud.entity.User;
+import com.demo.crud.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
+    private final UserService userService;
+    private final DataSourceTransactionManager dataSourceTransactionManager;
 
-    @GetMapping("/get-users")
-    public List<User> getUsers() {
-        return List.of(new User(1L,"zad"),
-                new User(2L,"ahmet"));
+    public UserController(UserService userService, DataSourceTransactionManager dataSourceTransactionManager) {
+        this.userService = userService;
+        this.dataSourceTransactionManager = dataSourceTransactionManager;
     }
 
-    @GetMapping("/get-user/{id}")
-    public User getUser(@PathVariable Long id) {
-        return new User(1L,"zad");
+    @PostMapping("/add")
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User createdUser = userService.addUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser); //eklendi kodu 201ok
     }
 
-    @PostMapping("/add-user")
-    public String addUser(@RequestBody User user) {
-        return user.toString();
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> allUsers =  userService.getAllUsers();
+        return ResponseEntity.status(HttpStatus.OK).body(allUsers);
     }
 
-    @PutMapping("/update-user/{id}")
-    public String updateUser(@PathVariable Long id, @RequestBody User user) {
-        user.setId(id);
-        return user.toString();
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getById(@PathVariable Long id) {
+        User user = userService.getById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
-    @DeleteMapping("/delete-user/{id}")
-    public String deleteUser(@PathVariable Long id) {
-            return deleteUser(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<User> deleteById(@PathVariable Long id) {
+        User s  =  userService.deleteById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(s);
+
     }
+
+    @PutMapping("{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) { //degisecek olan pathvariable , yeni değerler requestbody
+        userService.updateUsers();
+    }
+
 
 
 }
