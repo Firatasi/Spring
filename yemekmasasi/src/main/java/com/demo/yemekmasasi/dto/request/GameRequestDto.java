@@ -10,7 +10,7 @@ import java.io.Serializable;
  * DTO for {@link com.demo.yemekmasasi.entity.Game}
  */
 @Value
-public class GameRequestDto implements Serializable {
+public class GameRequestDto {
     @NotNull
     @NotEmpty
     String gameName;

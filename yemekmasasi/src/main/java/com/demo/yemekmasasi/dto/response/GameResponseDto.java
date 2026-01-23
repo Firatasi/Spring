@@ -8,6 +8,6 @@ import java.io.Serializable;
  * DTO for {@link com.demo.yemekmasasi.entity.Game}
  */
 @Value
-public class GameResponseDto implements Serializable {
+public class GameResponseDto{
     String gameName;
 }

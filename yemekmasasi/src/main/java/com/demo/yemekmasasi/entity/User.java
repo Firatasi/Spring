@@ -2,14 +2,13 @@ package com.demo.yemekmasasi.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-
+//mom
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+
 @Entity
 @Table(name = "user")
 public class User {
@@ -26,5 +25,8 @@ public class User {
     public void prePersist(){
         this.eklemeTarih = LocalDate.now();
     }
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Kimlik kimliks;
 
 }
