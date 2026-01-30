@@ -57,8 +57,8 @@ public class UlkeService {
 
     public UlkeResponseDto save(UlkeRequestDto ulkeRequestDto) {
         Ulke ulke = ulkeMapper.toUlke(ulkeRequestDto);
-        ulkeRepository.save(ulke);
-        return ulkeMapper.toUlkeResponseDto(ulke);
+        Ulke saved = ulkeRepository.save(ulke);
+        return ulkeMapper.toUlkeResponseDto(saved);
     }
 
 }
