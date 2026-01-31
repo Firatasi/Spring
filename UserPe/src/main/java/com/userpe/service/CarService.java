@@ -8,6 +8,7 @@ import com.userpe.repository.CarRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CarService {
@@ -27,10 +28,27 @@ public class CarService {
 
     public List<CarResponse> getAll() {
         List<Car> allCars =  carRepository.findAll();
-        List<CarResponse> carResponses = carMapper.toCarList(allCars);
-        return carResponses;
+        return carMapper.toCarList(allCars);
     }
 
+   public CarResponse getCarById(Long id){
+        Car car = carRepository.findById(id).orElse(null);
+        if(car == null){
+            return null;
+        }
+        return carMapper.toCarResponse(car);
+   }
+
+   public CarResponse updateCar(Long id, CarRequest carRequest){
+        Optional<Car> carOptional = carRepository.findById(id);
+        if (carOptional.isPresent()) {
+            carOptional.get().setColor(carRequest.getColor());
+            carOptional.get().setYear(carRequest.getYear());
+            carOptional.get().setColor(carRequest.getColor());
+            return carMapper.toCarResponse(carOptional.get());
+        }
+        return null;
+   }
 
 
 }
