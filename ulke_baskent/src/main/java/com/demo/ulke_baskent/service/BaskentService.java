@@ -21,7 +21,8 @@ public class BaskentService {
     }
 
     public BaskentResponseDto save(BaskentRequestDto baskentRequestDto) {
-        return baskentMapper.toBaskentResponseDto(baskentRequestDto);
+        return baskentMapper.to
+        BaskentResponseDto(baskentRequestDto);
     }
 
 
