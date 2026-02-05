@@ -3,6 +3,7 @@ package com.demo.ulke_baskent.service;
 import com.demo.ulke_baskent.dto.request.BaskentRequestDto;
 import com.demo.ulke_baskent.dto.response.BaskentResponseDto;
 import com.demo.ulke_baskent.entity.Baskent;
+import com.demo.ulke_baskent.exception.UserNotFoundException;
 import com.demo.ulke_baskent.mapper.BaskentMapper;
 import com.demo.ulke_baskent.repository.BaskentRepository;
 import org.springframework.stereotype.Service;
@@ -21,19 +22,19 @@ public class BaskentService {
     }
 
     public BaskentResponseDto save(BaskentRequestDto baskentRequestDto) {
-        return baskentMapper.to
-        BaskentResponseDto(baskentRequestDto);
+        return baskentMapper.toBaskentResponseDto(baskentRequestDto);
     }
 
 
     public List<BaskentResponseDto> getAllBaskent() {
     List<Baskent> all =  baskentRepository.findAll();
-    return baskentMapper.toBaskentResponseDtoList(all);
+    return baskentMapper.toBaskentResponseDtoList((Baskent) all);
     }
 
     public BaskentResponseDto getBaskentById(Long id) {
-        Optional<Baskent> baskent =  baskentRepository.findById(id);
-        return baskentMapper.toBaskentResponseDto(baskent);
+        Optional<Baskent> dto = Optional.ofNullable(baskentRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: " + id)));
+        return baskentMapper.toBaskentResponseDto(dto);
+
     }
 
     public BaskentResponseDto updateBaskent(Long id, BaskentRequestDto baskentRequestDto) {

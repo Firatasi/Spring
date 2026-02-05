@@ -15,4 +15,6 @@ public interface BaskentMapper {
     BaskentResponseDto toBaskentResponseDto(BaskentRequestDto baskent);
     List<BaskentResponseDto> toBaskentResponseDtoList(Baskent baskent);
     BaskentResponseDto toBaskentResponseDto(List<Baskent> baskentList);
+
+    <T> BaskentResponseDto toBaskentResponseDto(Optional<T> baskent);
 }
