@@ -1,7 +1,11 @@
 package com.demo.ulke_baskent.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -43,5 +47,24 @@ public class GlobalHandlerException {
         map.put("timestamp", LocalDateTime.now().toString());
         return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(map);
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String,Object>> handleValidationException(MethodArgumentNotValidException ex, ServletWebRequest webRequest) {
+        HashMap<String,Object> map  =  new HashMap<>();
+        map.put("message", ex.getMessage());
+        map.put("status", HttpStatus.BAD_REQUEST.value());
+        map.put("timestamp", LocalDateTime.now().toString());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+    }
+
+    @ExceptionHandler(CarNotFoundException.class)
+    public  ResponseEntity<Map<String,Object>> handleCarNotFoundException(CarNotFoundException ex, ServletWebRequest webRequest) {
+        HashMap<String,Object> map  =  new HashMap<>();
+        map.put("message", ex.getMessage());
+        map.put("status", HttpStatus.NOT_FOUND.value());
+        map.put("timestamp", LocalDateTime.now().toString());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+    }
+
 
 }
