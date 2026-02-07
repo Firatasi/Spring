@@ -4,6 +4,7 @@ import com.demo.ulke_baskent.dto.request.CarRequest;
 import com.demo.ulke_baskent.dto.response.CarResponse;
 import com.demo.ulke_baskent.entity.Car;
 import com.demo.ulke_baskent.service.CarService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class CarController {
     }
 
     @PostMapping
-    public ResponseEntity<CarResponse> addCar(@RequestBody CarRequest  carRequest) {
+    public ResponseEntity<CarResponse> addCar(@Valid @RequestBody CarRequest  carRequest) {
         CarResponse carResponse = carService.addCar(carRequest);
         return ResponseEntity.ok().body(carResponse);
     }
@@ -41,7 +42,7 @@ public class CarController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CarResponse> updateCar(@PathVariable Long id, @RequestBody CarRequest carRequest) {
+    public ResponseEntity<CarResponse> updateCar(@PathVariable Long id, @Valid @RequestBody CarRequest carRequest) {
         CarResponse carResponse = carService.updateCar(id, carRequest);
         return ResponseEntity.ok().body(carResponse);
     }

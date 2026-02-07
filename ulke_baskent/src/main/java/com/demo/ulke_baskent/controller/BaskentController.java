@@ -3,6 +3,7 @@ package com.demo.ulke_baskent.controller;
 import com.demo.ulke_baskent.dto.request.BaskentRequestDto;
 import com.demo.ulke_baskent.dto.response.BaskentResponseDto;
 import com.demo.ulke_baskent.service.BaskentService;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class BaskentController {
     }
 
     @PostMapping
-    public ResponseEntity<BaskentResponseDto> saveBaskent(@RequestBody BaskentRequestDto baskentRequestDto) {
+    public ResponseEntity<BaskentResponseDto> saveBaskent(@Valid @RequestBody BaskentRequestDto baskentRequestDto) {
         BaskentResponseDto baskentResponseDto = baskentService.save(baskentRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(baskentResponseDto);//eklerken status donmek daha mantıklı
     }
@@ -41,7 +42,7 @@ public class BaskentController {
 
     @PutMapping("/{id}")
     public ResponseEntity<BaskentResponseDto> updateBaskent(@PathVariable Long id,
-                                                            @RequestBody BaskentRequestDto baskentRequestDto) {
+                                                            @Valid @RequestBody BaskentRequestDto baskentRequestDto) {
         BaskentResponseDto dto = baskentService.updateBaskent(id, baskentRequestDto);
         return ResponseEntity.ok(dto);
     }

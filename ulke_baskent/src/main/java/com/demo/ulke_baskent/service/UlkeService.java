@@ -2,6 +2,7 @@ package com.demo.ulke_baskent.service;
 
 import com.demo.ulke_baskent.dto.request.UlkeRequestDto;
 import com.demo.ulke_baskent.dto.response.UlkeResponseDto;
+import com.demo.ulke_baskent.entity.Baskent;
 import com.demo.ulke_baskent.entity.Ulke;
 import com.demo.ulke_baskent.mapper.UlkeMapper;
 import com.demo.ulke_baskent.repository.UlkeRepository;
@@ -27,10 +28,9 @@ public class UlkeService {
         this.ulkeMapper = ulkeMapper;
     }
 
-    public List<Ulke> getAll() {
-        List<Ulke> all = ulkeRepository.findAll();
-        List<UlkeResponseDto> ulkeResponseDto = ulkeMapper.toUlkeResponseDtoList(all);
-        return ulkeResponseDto;
+    public List<UlkeResponseDto> getAllUlke() {
+    List<Baskent> ulkeList = ulkeRepository.findAll();
+    return ulkeMapper.toUlkeResponseDtoList(ulkeList);
     }
 
     public UlkeResponseDto getById(Long id) {

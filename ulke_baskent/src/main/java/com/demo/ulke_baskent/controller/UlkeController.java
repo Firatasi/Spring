@@ -4,6 +4,7 @@ import com.demo.ulke_baskent.dto.request.UlkeRequestDto;
 import com.demo.ulke_baskent.dto.response.UlkeResponseDto;
 import com.demo.ulke_baskent.entity.Ulke;
 import com.demo.ulke_baskent.service.UlkeService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +21,14 @@ public class UlkeController {
     }
 
     @PostMapping
-    public ResponseEntity<UlkeResponseDto> save(@RequestBody UlkeResponseDto ulkeResponseDto) {
+    public ResponseEntity<UlkeResponseDto> save(@Valid @RequestBody UlkeResponseDto ulkeResponseDto) {
         return ResponseEntity.ok(ulkeService.save(Ulke));
     }
 
     @GetMapping
     public ResponseEntity<List<UlkeResponseDto>> getAll() {
-        return ResponseEntity.ok(ulkeService.getAll());
+        UlkeResponseDto ulkeResponseDto = ulkeService.getAllUlke();
+        return
     }
 
     @PostMapping("{/id}")
@@ -36,7 +38,7 @@ public class UlkeController {
 
     @PutMapping("{/id}")
     public ResponseEntity<UlkeResponseDto> update(@PathVariable Long id,
-                                       @RequestBody UlkeRequestDto ulkeRequestDto) {
+                                                  @Valid @RequestBody UlkeRequestDto ulkeRequestDto) {
         return ResponseEntity.ok(ulkeService.update(id, ulkeRequestDto));
     }
 
