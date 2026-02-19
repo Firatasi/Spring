@@ -2,12 +2,12 @@ package com.demo.ulke_baskent.controller;
 
 import com.demo.ulke_baskent.dto.request.UlkeRequestDto;
 import com.demo.ulke_baskent.dto.response.UlkeResponseDto;
-import com.demo.ulke_baskent.entity.Ulke;
 import com.demo.ulke_baskent.service.UlkeService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RequestMapping("api/v1/ulke")
@@ -21,14 +21,15 @@ public class UlkeController {
     }
 
     @PostMapping
-    public ResponseEntity<UlkeResponseDto> save(@Valid @RequestBody UlkeResponseDto ulkeResponseDto) {
-        return ResponseEntity.ok(ulkeService.save(Ulke));
+    public ResponseEntity<UlkeResponseDto> save(@Valid @RequestBody UlkeRequestDto ulkeRequestDto) {
+        UlkeResponseDto ulkeResponseDto = ulkeService.save(ulkeRequestDto);
+        return ResponseEntity.ok(ulkeResponseDto);
     }
 
     @GetMapping
     public ResponseEntity<List<UlkeResponseDto>> getAll() {
-        UlkeResponseDto ulkeResponseDto = ulkeService.getAllUlke();
-        return
+        UlkeResponseDto ulkeResponseDto = (UlkeResponseDto) ulkeService.getAllUlke();
+        return ResponseEntity.ok().body(Collections.singletonList(ulkeResponseDto));
     }
 
     @PostMapping("{/id}")
@@ -40,6 +41,11 @@ public class UlkeController {
     public ResponseEntity<UlkeResponseDto> update(@PathVariable Long id,
                                                   @Valid @RequestBody UlkeRequestDto ulkeRequestDto) {
         return ResponseEntity.ok(ulkeService.update(id, ulkeRequestDto));
+    }
+    @DeleteMapping
+    public ResponseEntity<UlkeResponseDto> delete(@PathVariable Long id) {
+        ulkeService.deleteUlke(id);
+        return ResponseEntity.ok().build();
     }
 
 }
