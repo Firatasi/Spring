@@ -7,6 +7,7 @@ import com.demo.ulke_baskent.exception.CarAlreadyExistException;
 import com.demo.ulke_baskent.exception.CarNotFoundException;
 import com.demo.ulke_baskent.mapper.CarMapper;
 import com.demo.ulke_baskent.repository.CarRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class CarService {
     }
 
     public CarResponse getCarById(Long id) {
-        Car car = carRepository.findById(id).orElseThrow(()-> new CarNotFoundException("Car not found!"));
+        Car car = carRepository.findById(id).orElseThrow(()-> new CarNotFoundException(HttpStatus.NOT_FOUND.value(), "Car not found!"));
         return carMapper.toCarResponse(car);
     }
 
@@ -52,12 +53,12 @@ public class CarService {
             Car savedCar = carRepository.save(carOne);
             return carMapper.toCarResponse(savedCar);
         }else  {
-            throw new CarNotFoundException("Car not found!");
+            throw new CarNotFoundException(HttpStatus.NOT_FOUND.value(), "Car not found!");
         }
     }
 
     public void deleteCar(Long id) {
-        Car car = carRepository.findById(id).orElseThrow(()-> new CarNotFoundException("Car mmt found!"));
+        Car car = carRepository.findById(id).orElseThrow(()-> new CarNotFoundException(HttpStatus.NOT_FOUND.value(), "Car mmt found!"));
         carRepository.deleteById(id);
     }
 }

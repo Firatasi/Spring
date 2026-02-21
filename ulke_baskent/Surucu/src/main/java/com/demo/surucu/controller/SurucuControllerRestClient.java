@@ -3,6 +3,7 @@ package com.demo.surucu.controller;
 import com.demo.surucu.CarResponse;
 import com.demo.surucu.service.SurucuServiceRestClient;
 import com.userpe.dto.request.CarRequest;
+import com.userpe.entity.Car;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +55,16 @@ public class SurucuControllerRestClient {
          return ResponseEntity.status(HttpStatus.CREATED).body("eklendi");
     }
 
+    @PutMapping
+    public ResponseEntity<CarResponse> updateCar(@PathVariable Long id, @RequestBody CarRequest carRequest) {
+        return surucuServiceRestClient.updateCar(id, carRequest);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteCar(@PathVariable Long id) {
+        surucuServiceRestClient.deleteCar(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("silindi");
+    }
 
 
 

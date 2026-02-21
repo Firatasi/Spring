@@ -1,8 +1,11 @@
 package com.demo.surucu.service;
 
 import com.demo.surucu.CarResponse;
+import com.demo.ulke_baskent.exception.CarNotFoundException;
 import com.userpe.dto.request.CarRequest;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -31,6 +34,9 @@ public class SurucuServiceRestClient {
                 .uri("/{id}",id) //uri şablonu ve parametre
 //                .uri(id) base url yoksa direkt id yazılabilir yukarda uricomponent yapısı kullanılabilir
                 .retrieve() //isteği gönder ve yanıtı al
+                .onStatus(HttpStatusCode::is4xxClientError, ((request,response) ->{
+                    throw new CarNotFoundException(HttpStatus.NOT_FOUND.value(),"car not found");
+                }))
                 .toEntity(CarResponse.class); //json yanıtını java nesnesine çevirir,Status code (200, 404, 500…),Header bilgileri,Body
 
         return responseEntity;
@@ -91,6 +97,31 @@ public class SurucuServiceRestClient {
                 .body(carRequest)
                 .retrieve()
                 .toBodilessEntity();
+    }
+
+    public ResponseEntity<CarResponse> updateCar(Long id, CarRequest carRequest) {
+        String path = "http://localhost:8080/api/car/v1/{id}";
+        URI uri = UriComponentsBuilder
+                .fromPath(path)
+                .buildAndExpand(id)
+                .toUri();
+
+
+        return restClient
+                .put()
+                .uri(uri)
+                .body(carRequest)
+                .retrieve()
+                .toEntity(CarResponse.class);
+
+    }
+
+    public void deleteCar(Long id) {
+        restClient
+                .delete()
+                .uri("/{id}",id)
+                .retrieve()
+                .toEntity(CarResponse.class);
     }
 
 }
