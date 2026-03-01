@@ -5,6 +5,9 @@ import com.demo.blogapi.exception.ApiException;
 import com.demo.blogapi.security.AuthenticatedUser;
 import com.demo.blogapi.users.Role;
 import com.demo.blogapi.users.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -39,6 +42,7 @@ public class ArticleService {
         return new PagedResponse<>(items, page, size, p.getTotalElements());
     }
 
+    @Cacheable(value = "articles", key = "#id") //ikinci istekte kod bloğunun hepsi çalışmaz cachteki bilgiler tekrar döndürülür
     public ArticleDetailResponse detail(long id) {
         var a = articleRepository.findById(id)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Article not found"));
@@ -62,6 +66,8 @@ public class ArticleService {
         return detail(a.getId());
     }
 
+    @CacheEvict(value = "articles", allEntries = true) //cachteki bütün articlearı temizle cacheput ile kullanılır
+    @CachePut(value = "articles", key = "#id")//sadece verilen idyi günceller
     public ArticleDetailResponse update(long id, AuthenticatedUser au, ArticleCreateUpdateRequest req) {
         var a = articleRepository.findById(id)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Article not found"));
