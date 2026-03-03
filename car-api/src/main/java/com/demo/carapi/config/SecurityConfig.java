@@ -14,9 +14,18 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable) // token devre dışı
-                .authorizeHttpRequests(request->request.anyRequest().authenticated()) //kullanıcı hangi istekte bulunursa bulunsun doğrulama yapması gerekiyor
+                .authorizeHttpRequests(request->request
+                        //.anyRequest().authenticated()) //kullanıcı hangi istekte bulunursa bulunsun doğrulama yapması gerekiyor
+                        .requestMatchers("car/get-cars").authenticated() //giirşi yapmış kullanıcılara izin verir
+                        .requestMatchers("car/add-car").hasRole("ADMIN")
+                        .requestMatchers("car/delete-car/").hasRole("ADMIN")
+                        .anyRequest().denyAll()//bunların dışındaki bütün istekleri reddet
+                )
+
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
+
+
 
 }
