@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+//@PreAuthorize parametrelere erişebiliyor
+//@PostAuthorize return değerine erişebiliyor ikiside method level security kodu
+
 @Data
 @Service
 public class CarService {
