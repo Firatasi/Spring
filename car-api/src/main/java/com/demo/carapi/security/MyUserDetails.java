@@ -1,5 +1,6 @@
 package com.demo.carapi.security;
 
+import com.demo.carapi.entity.Role;
 import com.demo.carapi.entity.User;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,4 +34,9 @@ public class MyUserDetails implements UserDetails {
     public String getUsername() {
         return user.getName();
     }
+
+    public Role getRole() {
+        return user.getRole();
+    }
+
 }

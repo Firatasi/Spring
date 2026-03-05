@@ -33,7 +33,8 @@ public class SecurityConfig {
 //                        .requestMatchers("car/get-cars").authenticated() //giirşi yapmış kullanıcılara izin verir
 //                        .requestMatchers("car/add-car").hasRole("ADMIN")
 //                        .requestMatchers("car/delete-car/").hasRole("ADMIN")
-                        .requestMatchers("/register","/login").permitAll()//herkes kayıt olabilir
+                        .requestMatchers("/profile","/profile2", "/profile3","/profile4").authenticated()//doğrulanmış kişiler erişebilir
+                        .requestMatchers("/register","/login","/logout").permitAll()//herkes kayıt olabilir
                         .anyRequest().denyAll()//bunların dışındaki bütün istekleri reddet
                 )
 

@@ -5,6 +5,7 @@ import com.demo.carapi.dto.response.CarResponseDto;
 import com.demo.carapi.service.CarService;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,11 +32,13 @@ public class CarController {
         return ResponseEntity.ok().body(carService.findById(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')" )// method level security sadece admin veya user tüm arabaları görüntüleyebilsin
     @GetMapping("/get-cars")
     public ResponseEntity<List<CarResponseDto>> getAllCars() {
         return ResponseEntity.ok().body(carService.findAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")// sadece admin güncelleme yapabilir
     @PutMapping("/update-car/{id}")
     public ResponseEntity<CarResponseDto> updateCar(@PathVariable Long id,
                                                     @RequestBody CarRequestDto carRequestDto) {
