@@ -4,6 +4,8 @@ import com.demo.carapi.dto.LoginDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,10 +18,12 @@ public class UserLoginController {
 
     private final MyUserDetailsService myUserDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final MyAuhtenticationProvider myAuhtenticationProvider;
 
-    public UserLoginController(MyUserDetailsService myUserDetailsService, PasswordEncoder passwordEncoder) {
+    public UserLoginController(MyUserDetailsService myUserDetailsService, PasswordEncoder passwordEncoder, MyAuhtenticationProvider myAuhtenticationProvider) {
         this.myUserDetailsService = myUserDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.myAuhtenticationProvider = myAuhtenticationProvider;
     }
 
     @PostMapping("/login")
@@ -45,6 +49,18 @@ public class UserLoginController {
             return ResponseEntity.badRequest().build();
 
         }
+
+    }
+
+    //kendi myauhtenticationproviderımızı yazdıktan sonra
+    @PostMapping("/login2")
+    public ResponseEntity<?> login2(@Valid @RequestBody LoginDto loginDto) {
+       String username = loginDto.getUsername();
+       String password = loginDto.getPassword();
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(username,password);
+        Authentication authenticate = myAuhtenticationProvider.authenticate(authentication);
+        return ResponseEntity.ok(authenticate);
 
     }
 
