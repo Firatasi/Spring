@@ -3,9 +3,9 @@ package com.demo.carapi.security;
 import com.demo.carapi.entity.User;
 import com.demo.carapi.repository.UserRepository;
 import org.jspecify.annotations.Nullable;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,8 +14,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.channels.AcceptPendingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 @Service
 public class MyAuhtenticationProvider implements AuthenticationProvider {
 
@@ -36,6 +39,23 @@ public class MyAuhtenticationProvider implements AuthenticationProvider {
                 .orElseThrow(()-> new UsernameNotFoundException("Kullanıcı Adı Bulunamadı!"));
 
         if(passwordEncoder.matches(password, user.getPassword())) {
+
+            if (!user.isEnabled()) {
+                throw new DisabledException("Hesabınız Devre Dışı");
+            }
+
+            if (!user.isAccountNonLocked()) {
+                throw new LockedException("Hesabınız Kilitli");
+            }
+
+            if (!user.isCredentialsNonExpired()) {
+                throw new AccountExpiredException("Hesap Süresi Doldu");
+            }
+
+            if (!user.isAccountNonExpired()) {
+                throw new CredentialsExpiredException("Şifre Süresi Doldu");
+            }
+
             List<GrantedAuthority> authorityList = new ArrayList<>(); // kullanıcı rolunude geri dönmemiz gerek
             authorityList.add(new SimpleGrantedAuthority(user.getRole().name()));
             return new UsernamePasswordAuthenticationToken(username, null, authorityList);

@@ -39,4 +39,24 @@ public class MyUserDetails implements UserDetails {
         return user.getRole();
     }
 
+    @Override
+    public boolean isAccountNonExpired() {//kullanıcı hesabı zaman aşımına uğramış mı uğramamış mı
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {//kullanıcının hesabı kilitli mi
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {//Şifre kimlik süresi doldu mu örn 6ayda bir banka şif değiş
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {// kullanıcının hesabı aktif mi?
+        return true;
+    }
+
 }
