@@ -3,42 +3,35 @@ package com.demo.carapi.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
     private final MyUserDetailsService myUserDetailsService;
+    private final JwtFilter jwtFilter;
 
-    public SecurityConfig(MyUserDetailsService myUserDetailsService) {
+    public SecurityConfig(MyUserDetailsService myUserDetailsService, JwtFilter jwtFilter) {
         this.myUserDetailsService = myUserDetailsService;
+        this.jwtFilter = jwtFilter;
     }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(csrf->csrf.disable()) // token devre dışı
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize->authorize
-                        //.anyRequest().authenticated()) //kullanıcı hangi istekte bulunursa bulunsun doğrulama yapması gerekiyor
-//                        .requestMatchers("car/get-cars").authenticated() //giirşi yapmış kullanıcılara izin verir
-//                        .requestMatchers("car/add-car").hasRole("ADMIN")
-//                        .requestMatchers("car/delete-car/").hasRole("ADMIN")
-                        .requestMatchers("/profile","/profile2", "/profile3","/profile4").authenticated()//doğrulanmış kişiler erişebilir
-                        .requestMatchers("/register","/login","/logout","login2").permitAll()//herkes kayıt olabilir
-                        .anyRequest().denyAll()//bunların dışındaki bütün istekleri reddet
-                )
-
-                .httpBasic(Customizer.withDefaults())
+                        .requestMatchers("/register","/login","/login2").permitAll()//herkes kayıt olabilir
+                        .anyRequest().authenticated())//bunların dışındaki bütün isteklere doğrulanmış kişiler girebilsin
+                .sessionManagement(session->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //serverde session tutmaz zaten jwt statless çalışır
                 .build();
     }
 

@@ -19,6 +19,7 @@ public class User {
     private String lastName;
     private String password;
     private LocalDate eklemeTarih;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
