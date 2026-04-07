@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Siber Güvenlik PDF Tabanlı Quiz</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#0f172a}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    .hero,.card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;box-shadow:0 10px 30px rgba(15,23,42,.06)}
+    .hero{padding:22px;margin-bottom:18px}
+    .hero h1{margin:0 0 8px}
+    .hero p{margin:0;color:#475569;line-height:1.6}
+    .topbar{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+    select,button{height:46px;border-radius:12px;border:1px solid #cbd5e1;padding:0 12px;font-size:14px}
+    button{background:#2563eb;color:#fff;border:none;font-weight:700;cursor:pointer}
+    button.secondary{background:#0f172a}
+    button.ghost{background:#e2e8f0;color:#0f172a}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+    .stat{padding:16px}
+    .stat small{display:block;color:#64748b;margin-bottom:6px}
+    .stat strong{font-size:24px}
+    .examInfo{padding:18px;margin-bottom:16px}
+    .examInfo h2{margin:0 0 6px}
+    .examInfo p{margin:0;color:#475569;line-height:1.6}
+    .q{padding:18px;margin-bottom:14px}
+    .qhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .qtitle{margin:0;font-size:18px;line-height:1.6}
+    .tag{background:#eff6ff;color:#1d4ed8;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+    .opts{display:grid;gap:10px;margin-top:14px}
+    .opt{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border:1px solid #cbd5e1;border-radius:14px;cursor:pointer;background:#fff}
+    .opt:hover{background:#f8fbff;border-color:#93c5fd}
+    .opt.correct{background:#f0fdf4;border-color:#86efac}
+    .opt.incorrect{background:#fef2f2;border-color:#fca5a5}
+    .feedback{display:none;margin-top:12px;padding:12px 14px;border-radius:14px;line-height:1.6;font-size:14px}
+    .feedback.show{display:block}
+    .feedback.ok{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+    .feedback.bad{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+    @media (max-width:800px){.topbar,.stats{grid-template-columns:1fr 1fr}.qhead{flex-direction:column}}
+    @media (max-width:560px){.topbar,.stats{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>Siber Güvenlik – PDF Tabanlı Quiz</h1>
+    <p>Bu sürümde sorular hocanın PDF’indeki soru metinlerine sadık kalınarak işlendi. Şık seçince hemen altında doğru cevap ve kısa açıklama görünür.</p>
+  </div>
+
+  <div class="topbar">
+    <select id="examSelect"></select>
+    <button id="loadBtn">Sınavı Yükle</button>
+    <button id="resetBtn" class="secondary">Bu Sınavı Sıfırla</button>
+    <button id="showBtn" class="ghost">Cevapları Göster</button>
+  </div>
+
+  <div class="stats">
+    <div class="card stat"><small>Aktif Sınav</small><strong id="statExam">1</strong></div>
+    <div class="card stat"><small>Çözülen</small><strong id="statAnswered">0 / 10</strong></div>
+    <div class="card stat"><small>Doğru</small><strong id="statCorrect">0</strong></div>
+    <div class="card stat"><small>Başarı</small><strong id="statRate">0%</strong></div>
+  </div>
+
+  <div class="card examInfo">
+    <h2 id="examTitle"></h2>
+    <p id="examDesc"></p>
+  </div>
+
+  <div id="questions"></div>
+</div>
+
+<script>
+const exams = [
+  {
+    title: 'Sınav 1 – Hafta 1 / Temeller',
+    description: 'PDF soru 1-10 arası. Siber güvenlik tanımı, CIA, sosyal mühendislik, malware, authentication, AES, Cyber Kill Chain, risk formülü.',
+    questions: [
+      {tag:'PDF Soru 1', stem:'Aşağıdakilerden hangisi siber güvenliğin tanımıdır?', options:['Yalnızca antivirüs yazılımı yüklemek','Bilgi sistemlerini, ağları ve verileri siber tehditlere karşı koruma pratiği','İnternet bağlantısını şifrelemek','Yalnızca fiziksel güvenlik önlemleri almak','Bilgisayar donanımının bakımını yapmak'], answer:1, explanation:'Siber güvenlik tek bir araç değil; sistem, ağ ve veriyi birlikte koruma pratiğidir.'},
+      {tag:'PDF Soru 2', stem:'CIA üçlüsünde “Gizlilik (Confidentiality)” ne anlama gelir?', options:['Bilginin yedeklenmesi','Bilginin her zaman erişilebilir olması','Bilginin yetkisiz olarak değiştirilmemesi','Bilgiye yalnızca yetkili kişilerin erişebilmesi','Bilginin ağ üzerinden iletilmesi'], answer:3, explanation:'Gizlilik, bilgiye yalnızca yetkili kişilerin erişebilmesidir.'},
+      {tag:'PDF Soru 3', stem:'Aşağıdakilerden hangisi bir sosyal mühendislik saldırısı türü değildir?', options:['Phishing','Baiting','Pretexting','Tailgating','Brute force'], answer:4, explanation:'Brute force teknik bir parola deneme saldırısıdır; sosyal mühendislik değildir.'},
+      {tag:'PDF Soru 4', stem:'Aşağıdakilerden hangisi zararlı yazılım (malware) türlerinden biri değildir?', options:['Firewall','Worm','Trojan','Ransomware','Rootkit'], answer:0, explanation:'Firewall savunma aracıdır, malware değildir.'},
+      {tag:'PDF Soru 5', stem:'Kimlik doğrulama (authentication) hangi soruya cevap verir?', options:['Sen kimsin?','Hangi verilere erişebilirsin?','Ne yapmaya yetkilisin?','Hangi ağa bağlısın?','Ne zaman giriş yaptın?'], answer:0, explanation:'Authentication “Sen kimsin?” sorusunu cevaplar.'},
+      {tag:'PDF Soru 6', stem:'Aşağıdakilerden hangisi simetrik şifreleme algoritmasıdır?', options:['RSA','ECC','ElGamal','SHA-256','AES'], answer:4, explanation:'AES simetrik şifreleme algoritmasıdır; SHA-256 ise hash fonksiyonudur.'},
+      {tag:'PDF Soru 7', stem:'Cyber Kill Chain modelini geliştiren kuruluş hangisidir?', options:['OWASP','NIST','Lockheed Martin','Google','Microsoft'], answer:2, explanation:'Cyber Kill Chain modeli Lockheed Martin tarafından geliştirilmiştir.'},
+      {tag:'PDF Soru 8', stem:'Dersin değerlendirme yüzdeleri aşağıdakilerden hangisinde doğru verilmiştir?', options:['Ara sınav %40, ödevler %30, final %30','Ara sınav %30, ödevler %30, final %40','Ara sınav %20, ödevler %40, final %40','Ara sınav %30, ödevler %20, final %50','Ara sınav %25, ödevler %25, final %50'], answer:1, explanation:'Ara sınav %30, ödevler %30, final %40.'},
+      {tag:'PDF Soru 9', stem:'Parola = "123456" için verilen Python kodunun çıktısı ne olur?', options:['Guc: 0/5','Guc: 1/5','Guc: 2/5','Guc: 3/5','Guc: 5/5'], answer:1, explanation:'Uzunluk, büyük harf, küçük harf ve özel karakter yok; yalnızca rakam var. Sonuç 1/5.'},
+      {tag:'PDF Soru 10', stem:'Risk formülü aşağıdakilerden hangisinde doğru ifade edilmiştir?', options:['Risk = Tehdit + Zafiyet + Etki','Risk = Tehdit - Zafiyet','Risk = Zafiyet / Tehdit','Risk = Etki × (Tehdit + Zafiyet)','Risk = Tehdit × Zafiyet × Etki'], answer:4, explanation:'Risk formülü Tehdit × Zafiyet × Etki olarak verilir.'}
+    ]
+  },
+  {
+    title: 'Sınav 2 – Hafta 1 / Ağ ve Giriş',
+    description: 'PDF soru 11-16 arası. IDS-IPS, SQL Injection, virüs-worm, Base64, least privilege, HTTP-HTTPS.',
+    questions: [
+      {tag:'PDF Soru 11', stem:'IDS ve IPS arasındaki temel fark aşağıdakilerden hangisidir?', options:['IDS donanım tabanlıdır, IPS yazılım tabanlıdır','IDS yalnızca ağ trafiğini izler, IPS yalnızca sunucuları izler','IDS şifreleme yapar, IPS şifre çözer','IDS ve IPS arasında hiçbir fark yoktur','IDS saldırıyı tespit eder ve uyarı gönderir, IPS ek olarak saldırıyı engeller'], answer:4, explanation:'IDS pasif tespit eder; IPS tespit + engelleme yapar.'},
+      {tag:'PDF Soru 12', stem:'Verilen Python kodunda hangi güvenlik açığı bulunmaktadır?', options:['Cross-Site Scripting (XSS)','Path Traversal','Buffer Overflow','SQL Injection','DDoS'], answer:3, explanation:'Kullanıcı girdisi doğrudan SQL sorgusuna eklenmiş. Güvenli çözüm prepared statement kullanmaktır.'},
+      {tag:'PDF Soru 13', stem:'Virüs ile worm (solucan) arasındaki temel fark aşağıdakilerden hangisidir?', options:['Virüs konak dosyaya ihtiyaç duyar ve kullanıcı etkileşimi gerektirir, worm bağımsız olarak ağ üzerinden yayılır','Virüs ağ üzerinden yayılır, worm dosyalara eklenerek yayılır','Virüs yalnızca Windows’ta çalışır, worm tüm işletim sistemlerinde çalışır','Virüs zararlı değildir, worm zararlıdır','Virüs ve worm arasında fark yoktur'], answer:0, explanation:'Virüs genelde konak dosya ister; worm bağımsız ve ağ üzerinden yayılabilir.'},
+      {tag:'PDF Soru 14', stem:'Base64 kodlaması hakkında aşağıdakilerden hangisi doğrudur?', options:['Güçlü bir şifreleme yöntemidir','Bir kodlama yöntemidir, anahtar gerektirmez ve güvenlik amacı taşımaz','Anahtar gerektiren simetrik bir şifreleme algoritmasıdır','Asimetrik şifreleme kullanarak veriyi korur','Tek yönlü bir hash fonksiyonudur'], answer:1, explanation:'Base64 encoding’dir; encryption değildir.'},
+      {tag:'PDF Soru 15', stem:'En az yetki ilkesi (Principle of Least Privilege) aşağıdakilerden hangisini amaçlar?', options:['Tüm kullanıcılara yönetici yetkisi vermek','Sisteme erişimi tamamen engellemek','Kullanıcılara yalnızca görevlerini yerine getirmek için gerekli minimum erişim yetkisi vermek','Yalnızca BT departmanına erişim yetkisi vermek','Parola zorunluluğunu kaldırmak'], answer:2, explanation:'Least Privilege, gerekli minimum yetki verilmesini savunur.'},
+      {tag:'PDF Soru 16', stem:'HTTP ile HTTPS arasındaki temel güvenlik farkı aşağıdakilerden hangisidir?', options:['HTTP veriyi düz metin olarak iletir, HTTPS TLS/SSL ile şifreli iletişim sağlar','HTTP port 443, HTTPS port 80 kullanır','HTTP daha hızlıdır, HTTPS daha yavaştır','HTTP ve HTTPS arasında güvenlik farkı yoktur','HTTP yalnızca yerel ağlarda, HTTPS yalnızca internette çalışır'], answer:0, explanation:'HTTPS, TLS/SSL ile şifreli iletişim sağlar.'},
+      {tag:'Ek Tekrar', stem:'Authentication ve Authorization arasındaki doğru eşleştirme hangisidir?', options:['Authentication: ne yapabilirsin, Authorization: sen kimsin','Authentication: sen kimsin, Authorization: ne yapabilirsin','İkisi tamamen aynıdır','Authentication sadece ağ içindir','Authorization sadece veritabanı içindir'], answer:1, explanation:'Önce kimlik doğrulama, sonra yetkilendirme gelir.'},
+      {tag:'Ek Tekrar', stem:'Firewall için en doğru ifade hangisidir?', options:['Malware türüdür','Ağ trafiğini kurallara göre filtreleyen güvenlik sistemidir','Sadece şifreleme yapar','Yalnızca fiziksel güvenlik cihazıdır','Hash algoritmasıdır'], answer:1, explanation:'Firewall savunma aracıdır, malware değildir.'},
+      {tag:'Ek Tekrar', stem:'SQL Injection önlemede en güvenli yaklaşım hangisidir?', options:['Base64 kullanmak','Sadece JavaScript doğrulaması yapmak','Parametreli sorgu kullanmak','Parolayı uzatmak','IP gizlemek'], answer:2, explanation:'Prepared statement / parametreli sorgu en etkili yöntemdir.'},
+      {tag:'Ek Tekrar', stem:'Base64 ile ilgili yanlış inanış hangisidir?', options:['Geri çözülebilir olması','Anahtar gerektirmemesi','Güvenlik amacı taşımaması','Şifreleme sağlaması','Kodlama yöntemi olması'], answer:3, explanation:'Base64 şifreleme sağlamaz.'}
+    ]
+  },
+  {
+    title: 'Sınav 3 – Hafta 2 / Simetrik Kriptografi',
+    description: 'PDF soru 17-26 arası.',
+    questions: [
+      {tag:'PDF Soru 17', stem:'Kriptografi nedir?', options:['Bilgiyi yetkisiz erişimden korumak amacıyla dönüştürme bilimidir','Verileri sıkıştırma bilimidir','Ağ trafiğini izleyerek saldırı tespit etme yöntemidir','Yazılım hatalarını düzeltme disiplinidir','Veritabanı performans teknolojisidir'], answer:0, explanation:'Kriptografi, bilgiyi korumak için dönüştürme bilimidir.'},
+      {tag:'PDF Soru 18', stem:'Simetrik kriptografide şifreleme ve şifre çözme işlemleri için kaç anahtar kullanılır?', options:['İki farklı anahtar','Her blok için ayrı bir anahtar','Üç farklı anahtar','Anahtar kullanılmaz','Tek bir gizli anahtar'], answer:4, explanation:'Simetrik sistemlerde aynı gizli anahtar kullanılır.'},
+      {tag:'PDF Soru 19', stem:'Kerckhoffs ilkesine göre bir kriptografik sistemin güvenliği neye dayanmalıdır?', options:['Algoritmanın gizli tutulmasına','Kullanılan programlama diline','Yalnızca anahtarın gizliliğine','Şifreli metnin uzunluğuna','Ağ bağlantısının güvenliğine'], answer:2, explanation:'Algoritma açık olabilir; güvenlik anahtarın gizliliğine dayanmalıdır.'},
+      {tag:'PDF Soru 20', stem:'DES algoritmasının anahtar boyutu kaç bittir?', options:['128 bit','56 bit','256 bit','64 bit','192 bit'], answer:1, explanation:'DES’in etkin anahtar boyutu 56 bittir.'},
+      {tag:'PDF Soru 21', stem:'ECB modunun en büyük güvenlik açığı aşağıdakilerden hangisidir?', options:['Anahtarı şifreli metin içinde saklar','Paralel şifrelemeye izin vermez','Çok büyük anahtar boyutu gerektirir','Aynı düz metin blokları aynı şifreli metni üretir','Yalnızca tek bir blok şifreleyebilir'], answer:3, explanation:'ECB desen sızdırır; aynı blok aynı çıktıyı verir.'},
+      {tag:'PDF Soru 22', stem:'AES algoritmasının desteklediği anahtar boyutları hangileridir?', options:['56, 112 ve 168 bit','128, 192 ve 256 bit','64, 128 ve 192 bit','192, 256 ve 512 bit','128, 256 ve 512 bit'], answer:1, explanation:'AES 128/192/256 bit anahtar destekler.'},
+      {tag:'PDF Soru 23', stem:'Python’da hash hesaplamak için hangi modül kullanılır?', options:['hashlib','json','os','socket','random'], answer:0, explanation:'hashlib modülü kullanılır.'},
+      {tag:'PDF Soru 24', stem:'XOR işleminin A ⊕ A sonucu nedir?', options:['A','1','2A','Tanımsız','0'], answer:4, explanation:'Bir değerin kendisiyle XOR sonucu 0’dır.'},
+      {tag:'PDF Soru 25', stem:'Simetrik kriptografide n kullanıcılı bir ağda toplam kaç anahtar gerekir?', options:['n(n − 1)/2','n²','2n','n','log2 n'], answer:0, explanation:'Her kullanıcı çifti için ayrı anahtar gerektiğinden formül n(n−1)/2 olur.'},
+      {tag:'PDF Soru 26', stem:'AES algoritmasında SubBytes dönüşümü hangi kriptografik özelliği sağlar?', options:['Konfüzyon (confusion)','Anahtar genişletme','Difüzyon (diffusion)','Sıkıştırma','Kimlik doğrulama'], answer:0, explanation:'SubBytes doğrusal olmayan dönüşüm yaparak confusion sağlar.'}
+    ]
+  },
+  {
+    title: 'Sınav 4 – Hafta 2 / Modlar ve Yapılar',
+    description: 'PDF soru 27-32 arası ve bağlantılı tekrarlar.',
+    questions: [
+      {tag:'PDF Soru 27', stem:'CBC modunda ilk blok nasıl şifrelenir?', options:['Doğrudan anahtarla şifrelenir','Bir önceki şifreli blokla XOR’lanır','Bir Başlangıç Vektörü (IV) ile XOR’lanır ve sonra şifrelenir','Anahtarın hash değeriyle XOR’lanır','Şifrelenmez'], answer:2, explanation:'CBC’de ilk blok IV ile XOR’lanır.'},
+      {tag:'PDF Soru 28', stem:'3DES algoritmasında EDE sırasının kullanılma nedeni nedir?', options:['Şifreleme hızını artırmak','Daha kısa anahtar kullanmak','Kuantum bilgisayarlara dayanıklılık','Tek anahtarlı DES sistemleriyle geriye dönük uyumluluk sağlamak','Farklı blok boyutlarını desteklemek'], answer:3, explanation:'EDE yapısı eski DES sistemleriyle uyumluluk için seçilmiştir.'},
+      {tag:'PDF Soru 29', stem:'CTR modunun CBC moduna göre en önemli avantajı aşağıdakilerden hangisidir?', options:['Daha kısa anahtar boyutu','IV gerektirmez','Otomatik authentication sağlar','Daha az tur sayısı','Tamamen paralelleştirilebilir ve rastgele erişim destekler'], answer:4, explanation:'CTR modunda bloklar bağımsız üretilebildiği için paralelleşme ve random access vardır.'},
+      {tag:'PDF Soru 30', stem:'DES algoritmasında S-box’ın görevi nedir?', options:['Bitleri yeniden düzenlemek','Tur anahtarları üretmek','6-bit girdi alıp 4-bit çıktı üreten doğrusal olmayan ikame yapmak','32-bit veriyi 48 bite genişletmek','Başlangıç permütasyonu uygulamak'], answer:2, explanation:'S-box, DES’teki en kritik doğrusal olmayan bileşendir.'},
+      {tag:'PDF Soru 31', stem:'GF(2^8) sonlu alan aritmetiğinde toplama işlemi nasıl yapılır?', options:['Normal toplama ve mod 256','Polinom çarpımı ve mod','Bitsel AND','Bitsel XOR','Bitsel OR'], answer:3, explanation:'GF(2^8) toplaması XOR ile yapılır.'},
+      {tag:'PDF Soru 32', stem:'Feistel şifre yapısında şifre çözme işlemi nasıl gerçekleştirilir?', options:['Tamamen farklı algoritma kullanılır','Şifreleme ile aynı yapı kullanılır, ancak alt anahtarlar ters sırada uygulanır','F fonksiyonunun tersi hesaplanır','Yalnızca son tur geri alınır','Ters S-box kullanılır'], answer:1, explanation:'Feistel yapısında aynı yapı kullanılır; anahtar sırası ters çevrilir.'},
+      {tag:'Ek Tekrar', stem:'ECB neden modern uygulamalarda riskli kabul edilir?', options:['Şifreleme yapmadığı için','Desen sızdırdığı için','Sadece hash ürettiği için','Port kullandığı için','Ağ katmanında çalıştığı için'], answer:1, explanation:'Aynı blokların aynı çıktıyı üretmesi desen sızdırır.'},
+      {tag:'Ek Tekrar', stem:'CBC modunda ilk blok için zorunlu olan öğe hangisidir?', options:['MAC adresi','Salt','IV','DNS kaydı','Token'], answer:2, explanation:'CBC ilk blokta IV kullanır.'},
+      {tag:'Ek Tekrar', stem:'XOR ile ilgili doğru ifade hangisidir?', options:['A ⊕ A = 1','A ⊕ 0 = 0','A ⊕ A = 0','XOR geri döndürülemez','XOR sadece hash içindir'], answer:2, explanation:'A ⊕ A = 0 ve A ⊕ 0 = A.'},
+      {tag:'Ek Tekrar', stem:'CTR modu için en doğru ifade hangisidir?', options:['Her blok önceki bloğa bağımlıdır','Rastgele erişim desteklemez','Paralelleştirilebilir yapıdadır','Yalnızca tek blokta çalışır','IV kullanamaz'], answer:2, explanation:'CTR bağımsız blok üretimine uygundur.'}
+    ]
+  },
+  {
+    title: 'Sınav 5 – Hafta 3 / Asimetrik Kriptografi',
+    description: 'PDF soru 33-42 arası.',
+    questions: [
+      {tag:'PDF Soru 33', stem:'Asimetrik kriptografi kavramı ilk olarak hangi yılda ve kimler tarafından önerilmiştir?', options:['1976 – Diffie ve Hellman','1977 – Rivest, Shamir ve Adleman','1971 – Rivest ve Shamir','1980 – Merkle ve Hellman','1985 – Koblitz ve Miller'], answer:0, explanation:'Kavram 1976’da Diffie ve Hellman tarafından ortaya konmuştur.'},
+      {tag:'PDF Soru 34', stem:'RSA algoritmasının güvenliği aşağıdaki matematiksel problemlerden hangisine dayanır?', options:['Ayrık logaritma problemi','Eliptik eğri ayrık logaritma problemi','Büyük sayıların asal çarpanlarına ayrılmasının zorluğu','Knapsack problemi','Çarpışma direnci problemi'], answer:2, explanation:'RSA, integer factorization problemine dayanır.'},
+      {tag:'PDF Soru 35', stem:'Aşağıdakilerden hangisi kriptografik hash fonksiyonlarının temel özelliklerinden biri değildir?', options:['Tek yönlülük','Çarpışma direnci','Çığ etkisi','Tersine çevrilebilirlik','İkinci preimage direnci'], answer:3, explanation:'Hash tek yönlüdür; tersine çevrilebilirlik hash özelliği değildir.'},
+      {tag:'PDF Soru 36', stem:'Dijital imzalar aşağıdaki güvenlik hizmetlerinden hangisini sağlamaz?', options:['Kimlik doğrulama','Gizlilik','Bütünlük','İnkâr edilemezlik','Hem C hem D'], answer:1, explanation:'Dijital imza gizlilik sağlamaz; gizlilik şifreleme ile sağlanır.'},
+      {tag:'PDF Soru 37', stem:'Hangi hash algoritmaları kırılmış olup güvenlik amaçlı kullanılmamalıdır?', options:['SHA-256 ve SHA-512','SHA-3 ve SHA-256','SHA-256 ve MD5','SHA-1 ve SHA-3','MD5 ve SHA-1'], answer:4, explanation:'MD5 ve SHA-1 kırılmıştır.'},
+      {tag:'PDF Soru 38', stem:'X.509 dijital sertifikası aşağıdaki bilgilerden hangisini içermez?', options:['Sertifika sahibinin özel anahtarı','Geçerlilik süresi','Sertifika sahibinin açık anahtarı','CA’nın dijital imzası','Seri numarası'], answer:0, explanation:'Özel anahtar sertifika içinde bulunmaz.'},
+      {tag:'PDF Soru 39', stem:'HMAC ile dijital imza arasındaki temel fark aşağıdakilerden hangisidir?', options:['HMAC bütünlük sağlamaz','Dijital imza anahtar gerektirmez','HMAC asimetrik kullanır','HMAC inkâr edilemezlik sağlamaz, dijital imza sağlar','HMAC yalnızca kimlik doğrulama sağlar'], answer:3, explanation:'HMAC’te anahtar iki tarafta da bilindiği için non-repudiation yoktur.'},
+      {tag:'PDF Soru 40', stem:'Let’s Encrypt aşağıdaki sertifika türlerinden hangisini sunar?', options:['EV','OV','Wildcard EV','Kod imzalama','DV'], answer:4, explanation:'Let’s Encrypt ücretsiz DV sertifikaları sunar.'},
+      {tag:'PDF Soru 41', stem:'RSA anahtar üretiminde p=7 ve q=11 seçildiğinde Euler’in totient fonksiyonu ϕ(n) değeri kaçtır?', options:['77','60','66','70','42'], answer:1, explanation:'ϕ(n)=(7−1)(11−1)=60.'},
+      {tag:'PDF Soru 42', stem:'Hibrit şifreleme yaklaşımında asimetrik ve simetrik kriptografinin rolleri için hangisi doğrudur?', options:['Asimetrik oturum anahtarını güvenli paylaşır, simetrik veriyi şifreler','Simetrik dijital imza üretir','Asimetrik tüm veriyi şifreler','Her ikisi eşit veri şifreler','Simetrik anahtar dağıtır'], answer:0, explanation:'Hibrit modelde oturum anahtarı asimetrik yöntemle paylaşılır, veri simetrik yöntemle şifrelenir.'}
+    ]
+  },
+  {
+    title: 'Sınav 6 – OWASP ve Web Güvenliği',
+    description: 'PDF hafta 6-7 seçkisi.',
+    questions: [
+      {tag:'PDF Soru 43', stem:'256-bit ECC anahtarı yaklaşık kaç bitlik RSA anahtarına eşdeğer güvenlik sağlar?', options:['256-bit RSA','1024-bit RSA','2048-bit RSA','3072-bit RSA','8192-bit RSA'], answer:3, explanation:'256-bit ECC yaklaşık 3072-bit RSA güvenliğine denktir.'},
+      {tag:'PDF Soru 80', stem:'Aşağıdaki VPN protokollerinden hangisi güvenli değildir ve modern uygulamalarda kesinlikle kullanılmamalıdır?', options:['IPSec','PPTP','WireGuard','OpenVPN','L2TP/IPSec'], answer:1, explanation:'PPTP eski ve zayıf kabul edilir.'},
+      {tag:'PDF Soru 81', stem:'OWASP nedir?', options:['Web uygulama güvenliğini iyileştirmeyi amaçlayan açık kaynaklı bir topluluktur','Bir programlama dilidir','Sadece SQL veritabanlarını koruyan yazılımdır','Bir işletim sistemi güvenlik duvarıdır','Sadece büyük şirketlerin kullandığı ticari üründür'], answer:0, explanation:'OWASP bir topluluk ve bilgi kaynağıdır.'},
+      {tag:'PDF Soru 82', stem:'OWASP Top 10 2021 sürümünde birinci sıraya yükselen güvenlik riski hangisidir?', options:['Injection','Cryptographic Failures','Insecure Design','Broken Access Control','Security Misconfiguration'], answer:3, explanation:'2021 listesinde Broken Access Control A01 olmuştur.'},
+      {tag:'PDF Soru 94', stem:'CSRF saldırısını önlemek için aşağıdaki yöntemlerden hangisi kullanılmaz?', options:['Anti-CSRF tokenleri','Prepared statements','Referer/Origin kontrolü','SameSite cookie','Kritik işlemler için yeniden kimlik doğrulama'], answer:1, explanation:'Prepared statements SQL Injection için kullanılır, CSRF için değil.'},
+      {tag:'PDF Soru 95', stem:'Savunmasız ve Güncel Olmayan Bileşenler riski hakkında aşağıdakilerden hangisi yanlıştır?', options:['Modern uygulamalar onlarca-yüzlerce bağımlılığa sahiptir','Log4Shell bu kategoriye örnektir','SCA araçları ile taranabilir','Sadece açık kaynak bileşenler risk oluşturur, ticari yazılımlar güvenlidir','SBOM tutmak önerilen bir önlemdir'], answer:3, explanation:'Hem açık kaynak hem ticari bileşenlerde açık bulunabilir.'},
+      {tag:'PDF Soru 96', stem:'Sunucu tarafı doğrulama ile istemci tarafı doğrulama hakkında aşağıdakilerden hangisi doğrudur?', options:['İstemci tarafı doğrulama yeterlidir','İstemci tarafı doğrulama daha güvenlidir','Sunucu tarafı doğrulama sadece API’larda gereklidir','Her ikisi aynı güvenlik seviyesini sağlar','Sunucu tarafı doğrulama zorunludur çünkü istemci tarafı doğrulama atlanabilir'], answer:4, explanation:'Client-side validation atlanabilir; güvenlik için server-side zorunludur.'},
+      {tag:'PDF Soru 97', stem:'Aşağıdaki kavramlardan hangisi “girdiye asla güvenme” anlamına gelen güvenli kodlama prensibidir?', options:['Defense in Depth','Least Privilege','Fail Securely','Don\\'t Trust Input','Separation of Duties'], answer:3, explanation:'Doğru prensip Don’t Trust Input’tur.'},
+      {tag:'PDF Soru 98', stem:'SQL Injection saldırısını önlemenin en etkili yöntemi aşağıdakilerden hangisidir?', options:['Prepared statements kullanmak','Base64 kodlamak','Şifreyi uzatmak','Sadece client-side validation yapmak','HTTP kullanmak'], answer:0, explanation:'Prepared statements, SQL Injection’a karşı en etkili yöntemdir.'},
+      {tag:'Ek Tekrar', stem:'Dijital imza ile ilgili doğru ifade hangisidir?', options:['Gizlilik sağlar','Özel anahtarla üretilir ve açık anahtarla doğrulanır','Hash fonksiyonu değildir ve bütünlük vermez','Sadece simetrik anahtar kullanır','Sertifikaya özel anahtar yazılır'], answer:1, explanation:'Dijital imza özel anahtarla oluşturulur, açık anahtarla doğrulanır.'}
+    ]
+  }
+];
+
+const state = { current: 0, progress: JSON.parse(localStorage.getItem('pdfQuizProgress') || '{}') };
+
+function ensureProgress(){
+  if(!state.progress[state.current]) state.progress[state.current] = {};
+  return state.progress[state.current];
+}
+function save(){
+  localStorage.setItem('pdfQuizProgress', JSON.stringify(state.progress));
+}
+function populateSelect(){
+  const s=document.getElementById('examSelect');
+  s.innerHTML='';
+  exams.forEach((e,i)=>{
+    const o=document.createElement('option');
+    o.value=i;
+    o.textContent=`${i+1}. ${e.title}`;
+    s.appendChild(o);
+  });
+  s.value=state.current;
+}
+function renderStats(){
+  const exam=exams[state.current], p=ensureProgress();
+  const answered=Object.keys(p).length;
+  const correct=Object.values(p).filter(v=>v.correct).length;
+  const rate=answered?Math.round(correct*100/answered):0;
+  document.getElementById('statExam').textContent=String(state.current+1);
+  document.getElementById('statAnswered').textContent=`${answered} / ${exam.questions.length}`;
+  document.getElementById('statCorrect').textContent=String(correct);
+  document.getElementById('statRate').textContent=`${rate}%`;
+  document.getElementById('examTitle').textContent=exam.title;
+  document.getElementById('examDesc').textContent=exam.description;
+}
+function renderExam(){
+  renderStats();
+  const exam=exams[state.current], p=ensureProgress();
+  const box=document.getElementById('questions');
+  box.innerHTML='';
+  exam.questions.forEach((q,qi)=>{
+    const ua=p[qi];
+    const el=document.createElement('div');
+    el.className='card q';
+    let opts='';
+    q.options.forEach((opt,oi)=>{
+      let cls='opt';
+      if(ua){
+        if(oi===q.answer) cls+=' correct';
+        if(ua.selected===oi && oi!==q.answer) cls+=' incorrect';
+      }
+      opts += `<label class="${cls}"><input type="radio" name="q-${qi}" value="${oi}" ${ua?'disabled':''} ${ua&&ua.selected===oi?'checked':''}><span><strong>${String.fromCharCode(65+oi)})</strong> ${opt}</span></label>`;
+    });
+    const fb = ua
+      ? `<div class="feedback ${ua.correct?'ok':'bad'} show">${ua.correct ? 'Doğru. ' + q.explanation : 'Yanlış. Doğru cevap: <strong>' + String.fromCharCode(65+q.answer) + ') ' + q.options[q.answer] + '</strong><br>' + q.explanation}</div>`
+      : '<div class="feedback"></div>';
+    el.innerHTML=`<div class="qhead"><h3 class="qtitle">${qi+1}. ${q.stem}</h3><span class="tag">${q.tag}</span></div><div class="opts">${opts}</div>${fb}`;
+    el.querySelectorAll('input').forEach(inp=>inp.addEventListener('change',()=>answer(qi,Number(inp.value))));
+    box.appendChild(el);
+  });
+}
+function answer(qi, selected){
+  const p=ensureProgress();
+  if(p[qi]) return;
+  const q=exams[state.current].questions[qi];
+  p[qi]={selected, correct:selected===q.answer};
+  save();
+  renderExam();
+}
+function resetExam(){
+  state.progress[state.current]={};
+  save();
+  renderExam();
+}
+function showAnswers(){
+  const p=ensureProgress();
+  exams[state.current].questions.forEach((q,qi)=>{
+    if(!p[qi]) p[qi]={selected:-1, correct:false};
+  });
+  save();
+  renderExam();
+}
+document.getElementById('loadBtn').addEventListener('click',()=>{
+  state.current=Number(document.getElementById('examSelect').value);
+  renderExam();
+});
+document.getElementById('resetBtn').addEventListener('click', resetExam);
+document.getElementById('showBtn').addEventListener('click', showAnswers);
+populateSelect();
+renderExam();
+</script>
+</body>
+</html>
