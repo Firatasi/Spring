@@ -31,3 +31,25 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Spring Boot
+src/main/resources/application.properties
+
+# Env
+.env
+
+# IntelliJ
+.idea/
+*.iml
+
+# Build
+target/
+
+# Logs
+*.log
+
+# Node
+node_modules/
+
+# Python
+venv/
