@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - 5432:5432
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2002
+      POSTGRES_DB: postgres
+    networks:
+     - ortakag
+    healthcheck:
+      test: ["CMD", "pg_isready", "-u"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+networks:
+  ortakag:
+    driver: bridge
