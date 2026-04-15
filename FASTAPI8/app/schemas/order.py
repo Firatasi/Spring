@@ -33,4 +33,3 @@ class OrderResponse(BaseModel):
         orm_mode = True
 
 
-    3. KALDIK
